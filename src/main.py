@@ -71,11 +71,20 @@ def handle_people():
 
 #Start App routes for Favorites
 
-@app.route('/favorites/<int:id>', methods=['POST'])
+@app.route('/favorites/', methods=['POST'])
 @jwt_required()
-def handle_favoritespost(id):  
+def handle_favorites():
+    favorites_pack = request.json
+    new_favorites = Favorites(favorites_pack["name"])
+    #for favorite in new_favorites:
+    db.session.add(new_favorites)            
+    db.session.commit()
+    response_body = {
+        "status": "Ok"
+    }
+    status_code = 200 
     
-    return jsonify(Favorites.getAllFavorites(id)), 200
+    return jsonify(response_body), status_code
 
 @app.route('/favorites/', methods=['GET'])
 @jwt_required()
@@ -109,3 +118,15 @@ def handle_peopleid(id):
 
 # Protect a route with jwt_required, which will kick out requests
 # without a valid JWT present.
+
+
+
+
+
+
+
+# this only runs if `$ python src/main.py` is executed
+if __name__ == '__main__':
+    PORT = int(os.environ.get('PORT', 3000))
+    app.run(host='0.0.0.0', port=PORT, debug=False)
+
